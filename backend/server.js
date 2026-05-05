@@ -5,6 +5,7 @@ const path = require("path");
 const app = express();
 app.use(express.json());
 
+// POST isteğini karşılayan route
 app.post("/generate", (req, res) => {
   const { os, programs } = req.body;
   let output = "";
@@ -17,7 +18,7 @@ app.post("/generate", (req, res) => {
     }
   });
 
-  res.send(output);
+  res.type("text/plain").send(output);
 });
 
 app.listen(3000, () => console.log("Server çalışıyor: http://localhost:3000"));
