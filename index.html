@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Çoklu Program Yükleyici</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .hidden { display: none; }
+    button { margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>İşletim Sistemi Seç</h1>
+  <select id="osSelect">
+    <option value="windows">Windows</option>
+    <option value="macos">macOS</option>
+    <option value="linux">Linux</option>
+  </select>
+  <button onclick="showPrograms()">Devam</button>
+
+  <div id="programs" class="hidden"></div>
+  <button id="generateBtn" class="hidden" onclick="generateScript()">Script Oluştur</button>
+
+  <pre id="output"></pre>
+
+  <script>
+    const programList = {
+      windows: ["Chrome", "Spotify", "Zoom", "VS Code"],
+      macos: ["Slack", "VS Code", "Firefox", "Zoom"],
+      linux: ["Firefox", "LibreOffice", "GIMP", "VS Code"]
+    };
+
+    function showPrograms() {
+      const os = document.getElementById("osSelect").value;
+      const container = document.getElementById("programs");
+      container.innerHTML = "<h2>Program Seç</h2>";
+      programList[os].forEach(p => {
+        container.innerHTML += `<input type="checkbox" name="program" value="${p}">${p}<br>`;
+      });
+      container.classList.remove("hidden");
+      document.getElementById("generateBtn").classList.remove("hidden");
+    }
+
+    function generateScript() {
+      const os = document.getElementById("osSelect").value;
+      const selected = Array.from(document.querySelectorAll("input[name='program']:checked"))
+                            .map(el => el.value);
+      let script = "";
+
+      if (os === "windows") {
+        script = "REM Windows için yükleme komutları\n";
+        selected.forEach(p => {
+          script += `winget install ${p}\n`;
+        });
+      } else if (os === "macos") {
+        script = "#!/bin/bash\n# macOS için yükleme komutları\n";
+        selected.forEach(p => {
+          script += `brew install --cask ${p.toLowerCase().replace(" ", "-")}\n`;
+        });
+      } else if (os === "linux") {
+        script = "#!/bin/bash\n# Linux için yükleme komutları\n";
+        selected.forEach(p => {
+          script += `sudo apt install -y ${p.toLowerCase()}\n`;
+        });
+      }
+
+      document.getElementById("output").textContent = script;
+    }
+  </script>
+</body>
+</html>
